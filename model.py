@@ -3,20 +3,27 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def vap_sirs_model(y, t, beta, beta_v, kappa, upsilon, upsilon_r, omega, a, gamma):
+def vap_sirs_model(y, _, beta, beta_v, kappa, upsilon, upsilon_r, omega, a, gamma):
     S_D, S_N, S_1, S_2, V, I_D, I_N, I_1, I_2, R_V, R_D, R_N = y
     I = I_D + I_N
     I_V = I_1 + I_2
 
+    # Susceptible
     dS_D = - (beta * I + beta * I_V) * S_D + kappa * R_D
     dS_N = - (beta * I + beta * I_V) * S_N - upsilon * S_N + kappa * R_N
     dS_1 = upsilon_r * (1 - a) * S_2 + upsilon * (1 - a) * S_N - omega * S_1 - (beta * I + beta_v * I_V) * S_1
     dS_2 = - upsilon_r * S_2 + omega * V + omega * S_1 - (beta * I + beta_v * I_V) * S_2 + kappa * R_V
+
+    # Vaccinated
     dV = upsilon * a * S_N + upsilon_r * a * S_2 - omega * V + upsilon_r * R_V + upsilon * R_N
+
+    # Infected
     dI_D = (beta * I + beta * I_V) * S_D - gamma * I_D
     dI_N = (beta * I + beta * I_V) * S_N - gamma * I_N
     dI_1 = (beta * I + beta_v * I_V) * S_1 - gamma * I_1
     dI_2 = (beta * I + beta_v * I_V) * S_2 - gamma * I_2
+
+    # Recovered
     dR_V = gamma * I_V - kappa * R_V - upsilon_r * R_V
     dR_D = gamma * I_D - kappa * R_D
     dR_N = gamma * I_N - kappa * R_N - upsilon * R_N
