@@ -39,7 +39,7 @@ def modified_vap_sirs_model(y, _, beta_0, beta_m0, f, f_v, kappa, upsilon, upsil
     # Sn planują się zaszczepić
     # Sd nie planują się zaszczepić
     
-    Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2, V, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv = y
+    Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2, V, Vm, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv = y
 
     I = Id + In 
     Im = Imn + Imd
@@ -63,11 +63,12 @@ def modified_vap_sirs_model(y, _, beta_0, beta_m0, f, f_v, kappa, upsilon, upsil
     dSmn = - beta_m *(I + Im + Iv + Imv) * Smn - upsilon_m * Smn + kappa * Rmn
 
     dSm1 = upsilon_mr * (1 - a_m) * Sm2 + upsilon_m * (1 - a_m) * Smn + upsilon_m *(1-a_m)*Rmn + upsilon_mr*(1-a_m)*Rmv - omega_m * Sm1 - (beta_m * (I + Im) + beta_mv * (Iv+Imv)) * Sm1
-    dSm2 = - upsilon_mr * Sm2 + omega_m * V + omega_m * Sm1 - (beta_m * (I + Im) + beta_mv * (Iv+Imv)) * Sm2 + kappa * Rmv
+    dSm2 = - upsilon_mr * Sm2 + omega_m * Vm + omega_m * Sm1 - (beta_m * (I + Im) + beta_mv * (Iv+Imv)) * Sm2 + kappa * Rmv
 
     
     # Vaccinated
-    dV = upsilon * a * Sn + upsilon_m * a_m * Smn + upsilon_r * a * S2 + upsilon_mr * a_m * Sm2 - (omega + omega_m) * V + upsilon_r * a * Rv + upsilon_mr* a_m * Rmv + upsilon * a * Rn + upsilon_m* a_m * Rmn
+    dV = upsilon * a * Sn + upsilon_r * a * S2  - omega * V + upsilon_r * a * Rv  + upsilon * a * Rn 
+    dVm = upsilon_m * a_m * Smn + upsilon_mr * a_m * Sm2 - omega_m * Vm + upsilon_mr* a_m * Rmv + upsilon_m* a_m * Rmn
 
     # Infected
     dId = beta * (I + Im + Iv + Imv) * Sd - gamma * Id
@@ -81,15 +82,16 @@ def modified_vap_sirs_model(y, _, beta_0, beta_m0, f, f_v, kappa, upsilon, upsil
     dIm2 = (beta_m * (I + Im) + beta_mv * (Iv+Imv)) * Sm2 - gamma * Im2
 
     # Recovered
-    dRv = gamma * Iv - kappa * Rv - upsilon_r * Rv
-    dRmv = gamma * Imv - kappa * Rmv - upsilon_mr * Rmv
+    dRv = gamma * (I1 + I2) - kappa * Rv - upsilon_r * Rv
+    dRmv = gamma * (Im1 + Im2) - kappa * Rmv - upsilon_mr * Rmv
 
     dRd = gamma * Id - kappa * Rd
     dRn = gamma * In - kappa * Rn - upsilon * Rn
     dRmd = gamma * Imd - kappa * Rmd
     dRmn = gamma * Imn - kappa * Rmn - upsilon_m * Rmn
 
-    return [dSd, dSn, dSmn, dSmd, dS1, dS2, dSm1, dSm2, dV, dId, dIn, dImn, dImd, dI1, dI2, dIm1, dIm2, dRd, dRn, dRmn, dRmd, dRv, dRmv]
+    # print(f'{S1=}\t{S2=}')
+    return [dSd, dSn, dSmn, dSmd, dS1, dS2, dSm1, dSm2, dV, dVm, dId, dIn, dImn, dImd, dI1, dI2, dIm1, dIm2, dRd, dRn, dRmn, dRmd, dRv, dRmv]
 
 
 def simulate_vap_sirs_model(initial_conditions, beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, days):
@@ -101,7 +103,7 @@ def simulate_vap_sirs_model(initial_conditions, beta_0, beta_m0, f, f_v, kappa, 
 def plot_absolute_values(result):
     days = len(result)
     t = np.linspace(0, days, days)
-    Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2, V, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv = [result[:, i] for i in range(len(result[0]))]
+    Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2, V, Vm, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv = [result[:, i] for i in range(len(result[0]))]
 
     # Variables without 'm'
     fig1, axes1 = plt.subplots()
@@ -109,13 +111,13 @@ def plot_absolute_values(result):
     plt.plot(t, Sn, label='Sn')
     plt.plot(t, S1, label='S1')
     plt.plot(t, S2, label='S2')
-    plt.plot(t, V, label='V')
-    plt.plot(t, Id, label='Id')
-    plt.plot(t, In, label='In')
-    plt.plot(t, I1, label='I1')
-    plt.plot(t, I2, label='I2')
-    plt.plot(t, Rd, label='Rd')
-    plt.plot(t, Rn, label='Rn')
+    # plt.plot(t, V, label='V')
+    # plt.plot(t, Id, label='Id')
+    # plt.plot(t, In, label='In')
+    # plt.plot(t, I1, label='I1')
+    # plt.plot(t, I2, label='I2')
+    # plt.plot(t, Rd, label='Rd')
+    # plt.plot(t, Rn, label='Rn')
     plt.xlabel('Time (days)')
     plt.ylabel('Population')
     plt.title('VAP-SIRS Model Simulation for normal people')
@@ -128,6 +130,7 @@ def plot_absolute_values(result):
     plt.plot(t, Smd, label='Smd')
     plt.plot(t, Sm1, label='Sm1')
     plt.plot(t, Sm2, label='Sm2')
+    plt.plot(t, Vm, label='Vm')
     plt.plot(t, Imn, label='Imn')
     plt.plot(t, Imd, label='Imd')
     plt.plot(t, Im1, label='Im1')
@@ -163,3 +166,5 @@ def plot_changes_in_infected(result):
     plt.legend()
     plt.grid(True)
     return fig
+
+
