@@ -73,6 +73,10 @@ Rv = 0
 Rmv = 0
 
 
+# Paramtery do wariacji sezonowych (wiosna, lato, jesień, zima przez dwa lata)
+beta_values = [[0.2, 0.3], [0.4, 0.5], [0.2, 0.3], [0.1, 0.2], [0.2, 0.3], [0.4, 0.5], [0.2, 0.3], [0.1, 0.2]]
+
+
 # Przycisk do uruchomienia symulacji
 if st.button('Run simulation'):
     initial_conditions = [(1-I_percn)*Sd, (1-I_percn)*Sn, (1-I_percn)*Smn, (1-I_percn)*Smd, S1, S2, Sm1, Sm2, V, Vm, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv]
@@ -92,8 +96,8 @@ if st.button('Run simulation'):
                                     params['a'], 
                                     params['a_m'], 
                                     params['gamma'], 
-                                    params['days'],
-                                    params['und_inf']
+                                    params['und_inf'],
+                                    params['days']
                                     )
 
     total_plot = plot_compartments(result)
@@ -108,4 +112,36 @@ if st.button('Run simulation'):
     inf_change_plot = plot_changes_in_infected(result)
     st.markdown('### Changes in infected populations over time')
     st.plotly_chart(inf_change_plot)
+
+    result_s = run_model_with_seasonal_variations(initial_conditions,
+                                                   params['beta'], 
+                                                   params['beta_m'], 
+                                                   params['f'], 
+                                                   params['fv'], 
+                                                   params['kappa'], 
+                                                   params['upsilon'], 
+                                                   params['upsilon_r'], 
+                                                   params['upsilon_m'], 
+                                                   params['upsilon_mr'], 
+                                                   params['omega'], 
+                                                   params['omega_m'], 
+                                                   params['a'], 
+                                                   params['a_m'], 
+                                                   params['gamma'], 
+                                                   params['und_inf'],
+                                                   730,
+                                                   beta_values
+                                                   )
+    total_plot_s = plot_compartments(result_s)
+    st.markdown('### Seasonal variation')
+    st.plotly_chart(total_plot_s)
+
+    abs_plot1_s, abs_plot2_s = plot_absolute_values(result_s, N, params['m'])
+    st.markdown('### Group populations over time')
+    st.plotly_chart(abs_plot1_s)
+    st.plotly_chart(abs_plot2_s)
+
+    inf_change_plot_s = plot_changes_in_infected(result_s)
+    st.markdown('### Changes in infected populations over time')
+    st.plotly_chart(inf_change_plot_s)
     

@@ -68,10 +68,23 @@ def modified_vap_sirs_model(y, _, beta_0, beta_m0, f, f_v, kappa, upsilon, upsil
     return [dSd, dSn, dSmn, dSmd, dS1, dS2, dSm1, dSm2, dV, dVm, dId, dIn, dImn, dImd, dI1, dI2, dIm1, dIm2, dRd, dRn, dRmn, dRmd, dRv, dRmv]
 
 
-def simulate_vap_sirs_model(initial_conditions, beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, days, und_inf):
+def simulate_vap_sirs_model(initial_conditions, beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf, days):
     t = np.linspace(0, days, days)  # time points
     y0 = initial_conditions
     return odeint(modified_vap_sirs_model, y0, t, args=(beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf))
+
+
+def run_model_with_seasonal_variations(initial_conditions, beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf, days, beta_values):
+   
+    results = np.array([initial_conditions])  # macierz do przechowywania wyników
+    interval_length = days // len(beta_values) # długość sezonu
+
+    for i in range(len(beta_values)):
+        new_result = simulate_vap_sirs_model(results[-1], beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf, interval_length)
+        beta_0, beta_m0 = beta_values[i]  # zmieniamy bety
+        results = np.concatenate((results, new_result), axis=0)  # dodajemy wynik symulacji do listy
+
+    return results
 
 
 def plot_absolute_values(result, N, m):
