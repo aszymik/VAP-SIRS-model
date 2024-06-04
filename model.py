@@ -64,9 +64,7 @@ def modified_vap_sirs_model(y, _, beta_0, beta_m0, f, f_v, kappa, upsilon, upsil
     dRmd = gamma * Imd - kappa * Rmd
     dRmn = gamma * Imn - kappa * Rmn - upsilon_m * Rmn
 
-    # print(f'{S1=}\t{S2=}')
-    # print(sum([dSd, dSn, dSmn, dSmd, dS1, dS2, dSm1, dSm2, dV, dVm, dId, dIn, dImn, dImd, dI1, dI2, dIm1, dIm2, dRd, dRn, dRmn, dRmd, dRv, dRmv]))
-
+    
     return [dSd, dSn, dSmn, dSmd, dS1, dS2, dSm1, dSm2, dV, dVm, dId, dIn, dImn, dImd, dI1, dI2, dIm1, dIm2, dRd, dRn, dRmn, dRmd, dRv, dRmv]
 
 
@@ -159,6 +157,37 @@ def plot_changes_in_infected(result):
     fig.add_trace(go.Scatter(x=t[:-1], y=susceptible_vaccinated, mode='lines', name='Susceptible vaccinated'))
     fig.add_trace(go.Scatter(x=t[:-1], y=normal_not_vaccinated, mode='lines', name='Normal not vaccinated'))
     fig.add_trace(go.Scatter(x=t[:-1], y=normal_vaccinated, mode='lines', name='Normal vaccinated'))
-    fig.update_layout(title='VAP-SIRS Model Simulation (Differences)', xaxis_title='Time (days)', yaxis_title='Change in infected population')
+    fig.update_layout(title='VAP-SIRS Model Simulation (Differences)',
+                      xaxis_title='Time (days)',
+                      yaxis_title='Change in infected population',
+                      hovermode="x",
+                      autosize=False, width=1000, height=600,
+                      )
 
+    return fig
+
+
+def plot_compartments(result):
+    days = len(result)
+    t = np.linspace(0, days, days)
+    Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2, V, Vm, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv = [result[:, i] for i in range(len(result[0]))]
+
+    # Summing all compartments
+    S_total = np.sum([Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2], axis=0)
+    I_total = np.sum([Id, In, Imn, Imd, I1, I2, Im1, Im2], axis=0)
+    R_total = np.sum([Rd, Rn, Rmn, Rmd, Rv, Rmv], axis=0)
+    V_total = np.sum([V, Vm], axis=0)
+
+    # Creating the plot
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=t, y=S_total, mode='lines', name='S'))
+    fig.add_trace(go.Scatter(x=t, y=I_total, mode='lines', name='I'))
+    fig.add_trace(go.Scatter(x=t, y=R_total, mode='lines', name='R'))
+    fig.add_trace(go.Scatter(x=t, y=V_total, mode='lines', name='V'))
+
+    fig.update_layout(title='Sum of Compartments Over Time',
+                      xaxis_title='Time (days)',
+                      yaxis_title='Total',
+                      hovermode="x",
+                      autosize=False, width=1000, height=600,)
     return fig
