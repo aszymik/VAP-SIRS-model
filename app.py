@@ -26,15 +26,16 @@ with st.sidebar:
 
     gamma = 1/st.slider('Duration of the disease', min_value=1, max_value=21, value=7)
     d = st.slider("% of people who won't vaccinate", min_value=0.0, max_value=1.0, value=0.12)
-    m = st.slider('% of more susceptible people', min_value=0.0, max_value=1.0, value=0.10)
-    days = st.number_input('Days', min_value=1, max_value=2000, value=100, step=1)
+    m = st.slider('% of more susceptible people', min_value=0.0, max_value=1.0, value=0.05)
+    days = st.number_input('Days', min_value=1, max_value=2000, value=150, step=1)
 
     
 
 # Wartości początkowe
-N = 100
+N = 10000
 V = 0
 Vm = 0
+I_percentage = 10e-6
 
 I_percn = 0.1
 
@@ -76,6 +77,6 @@ if st.button('Run simulation'):
     st.plotly_chart(abs_plot1)
     st.plotly_chart(abs_plot2)
 
-    # changes_in_infected_plot = plot_changes_in_infected(result)
-    # st.markdown('### Changes in infected populations over time')
-    # st.pyplot(changes_in_infected_plot)
+    inf_change_plot = plot_changes_in_infected(result)
+    st.markdown('### Changes in infected populations over time')
+    st.plotly_chart(inf_change_plot)
