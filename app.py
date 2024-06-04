@@ -22,6 +22,7 @@ with st.sidebar:
         'a': st.slider('Vaccine effectiveness for normal people', min_value=0.0, max_value=1.0, value=0.79),
         'a_m': st.slider('Vaccine effectiveness for more susceptible people', min_value=0.0, max_value=1.0, value=0.60),
         'gamma': 1/st.slider('Duration of the disease', min_value=1, max_value=21, value=7),
+        'und_inf': st.slider('% of undiagnosed infected people', min_value=0.0, max_value=1.0, value=1.0),
         'd': st.slider("% of people who won't vaccinate", min_value=0.0, max_value=1.0, value=0.12),
         'm': st.slider('% of more susceptible people', min_value=0.0, max_value=1.0, value=0.05),
         'days': st.number_input('Days', min_value=1, max_value=2000, value=150, step=1)
@@ -91,14 +92,15 @@ if st.button('Run simulation'):
                                     params['a'], 
                                     params['a_m'], 
                                     params['gamma'], 
-                                    params['days']
+                                    params['days'],
+                                    params['und_inf']
                                     )
 
     total_plot = plot_compartments(result)
     st.markdown('### Sum of Compartments Over Time')
     st.plotly_chart(total_plot)
 
-    abs_plot1, abs_plot2 = plot_absolute_values(result)
+    abs_plot1, abs_plot2 = plot_absolute_values(result, N, params['m'])
     st.markdown('### Group populations over time')
     st.plotly_chart(abs_plot1)
     st.plotly_chart(abs_plot2)
