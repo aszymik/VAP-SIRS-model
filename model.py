@@ -1,6 +1,9 @@
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 import numpy as np
+import plotly.graph_objects as go
+import plotly.express as px
+from itertools import cycle
 
 
 def vap_sirs_model(y, _, beta, beta_v, kappa, upsilon, upsilon_r, omega, a, gamma):
@@ -105,12 +108,12 @@ def plot_absolute_values(result):
     t = np.linspace(0, days, days)
     Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2, V, Vm, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv = [result[:, i] for i in range(len(result[0]))]
 
-    # Variables without 'm'
-    fig1, axes1 = plt.subplots()
-    plt.plot(t, Sd, label='Sd')
-    plt.plot(t, Sn, label='Sn')
-    plt.plot(t, S1, label='S1')
-    plt.plot(t, S2, label='S2')
+    # # Variables without 'm'
+    # fig1, axes1 = plt.subplots()
+    # plt.plot(t, Sd, label='Sd')
+    # plt.plot(t, Sn, label='Sn')
+    # plt.plot(t, S1, label='S1')
+    # plt.plot(t, S2, label='S2')
     # plt.plot(t, V, label='V')
     # plt.plot(t, Id, label='Id')
     # plt.plot(t, In, label='In')
@@ -118,30 +121,71 @@ def plot_absolute_values(result):
     # plt.plot(t, I2, label='I2')
     # plt.plot(t, Rd, label='Rd')
     # plt.plot(t, Rn, label='Rn')
-    plt.xlabel('Time (days)')
-    plt.ylabel('Population')
-    plt.title('VAP-SIRS Model Simulation for normal people')
-    plt.legend()
-    plt.grid(True)
+    # plt.xlabel('Time (days)')
+    # plt.ylabel('Population')
+    # plt.title('VAP-SIRS Model Simulation for normal people')
+    # plt.legend()
+    # plt.grid(True)
+
+    # Assuming 'result' is a numpy array
+    days = len(result)
+    t = np.linspace(0, days, days)
+    Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2, V, Vm, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv = [result[:, i] for i in range(len(result[0]))]
+
+    # Create a plotly graph object
+    palette = cycle(px.colors.qualitative.Pastel)
+    fig1 = go.Figure()
+
+    # Add traces
+    fig1.add_trace(go.Scatter(x=t, y=Sd, mode='lines', name='Sd', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=Sn, mode='lines', name='Sn', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=S1, mode='lines', name='S1', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=S2, mode='lines', name='S2', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=V, mode='lines', name='V', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=Id, mode='lines', name='Id', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=In, mode='lines', name='In', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=I1, mode='lines', name='I1', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=I2, mode='lines', name='I2', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=Rd, mode='lines', name='Rd', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=Rn, mode='lines', name='Rn', line_color=next(palette)))
+
+    # Set layout properties
+    fig1.update_layout(
+        title='VAP-SIRS Model Simulation for normal people',
+        xaxis_title='Time (days)',
+        yaxis_title='Population',
+        legend_title='Variables',
+        hovermode="x",
+        autosize=False, width=1000, height=600,
+    )
+
 
     # Variables with 'm'
-    fig2, axes2 = plt.subplots()
-    plt.plot(t, Smn, label='Smn')
-    plt.plot(t, Smd, label='Smd')
-    plt.plot(t, Sm1, label='Sm1')
-    plt.plot(t, Sm2, label='Sm2')
-    plt.plot(t, Vm, label='Vm')
-    plt.plot(t, Imn, label='Imn')
-    plt.plot(t, Imd, label='Imd')
-    plt.plot(t, Im1, label='Im1')
-    plt.plot(t, Im2, label='Im2')
-    plt.plot(t, Rmn, label='Rmn')
-    plt.plot(t, Rmd, label='Rmd')
-    plt.xlabel('Time (days)')
-    plt.ylabel('Population')
-    plt.title('VAP-SIRS Model Simulation for more susceptible people')
-    plt.legend()
-    plt.grid(True)
+    palette = cycle(px.colors.qualitative.Pastel)
+    fig2 = go.Figure()
+
+    # Add traces
+    fig2.add_trace(go.Scatter(x=t, y=Smn, mode='lines', name='Smn', line_color=next(palette)))
+    fig2.add_trace(go.Scatter(x=t, y=Smd, mode='lines', name='Smd', line_color=next(palette)))
+    fig2.add_trace(go.Scatter(x=t, y=Sm1, mode='lines', name='Sm1', line_color=next(palette)))
+    fig2.add_trace(go.Scatter(x=t, y=Sm2, mode='lines', name='Sm2', line_color=next(palette)))
+    fig2.add_trace(go.Scatter(x=t, y=Vm, mode='lines', name='Vm', line_color=next(palette)))
+    fig2.add_trace(go.Scatter(x=t, y=Imn, mode='lines', name='Imn', line_color=next(palette)))
+    fig2.add_trace(go.Scatter(x=t, y=Imd, mode='lines', name='Imd', line_color=next(palette)))
+    fig2.add_trace(go.Scatter(x=t, y=Im1, mode='lines', name='Im1', line_color=next(palette)))
+    fig2.add_trace(go.Scatter(x=t, y=Im2, mode='lines', name='Im2', line_color=next(palette)))
+    fig2.add_trace(go.Scatter(x=t, y=Rmn, mode='lines', name='Rmn', line_color=next(palette)))
+    fig2.add_trace(go.Scatter(x=t, y=Rmd, mode='lines', name='Rmd', line_color=next(palette)))
+
+    # Set layout properties
+    fig2.update_layout(
+        title='VAP-SIRS Model Simulation for more susceptible people',
+        xaxis_title='Time (days)',
+        yaxis_title='Population',
+        legend_title='Variables',
+        hovermode="x",
+        autosize=False, width=1000, height=600,
+    )
 
     return fig1, fig2
 
@@ -166,5 +210,3 @@ def plot_changes_in_infected(result):
     plt.legend()
     plt.grid(True)
     return fig
-
-
