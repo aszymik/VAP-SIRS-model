@@ -74,7 +74,8 @@ Rmv = 0
 
 
 # Paramtery do wariacji sezonowych (wiosna, lato, jesień, zima przez dwa lata)
-beta_values = [[0.2, 0.3], [0.4, 0.5], [0.2, 0.3], [0.1, 0.2], [0.2, 0.3], [0.4, 0.5], [0.2, 0.3], [0.1, 0.2]]
+years = 2
+beta_values = [[0.04, 0.1], [0.4, 0.6], [0.04, 0.1], [0.02, 0.09]] * years
 
 
 # Przycisk do uruchomienia symulacji
@@ -132,16 +133,9 @@ if st.button('Run simulation'):
                                                    730,
                                                    beta_values
                                                    )
-    total_plot_s = plot_compartments(result_s)
+    
+    inf_seasons_plot = plot_infected_seasons(result_s, beta_values)
     st.markdown('### Seasonal variation')
-    st.plotly_chart(total_plot_s)
+    st.plotly_chart(inf_seasons_plot)
 
-    abs_plot1_s, abs_plot2_s = plot_absolute_values(result_s, N, params['m'])
-    st.markdown('### Group populations over time')
-    st.plotly_chart(abs_plot1_s)
-    st.plotly_chart(abs_plot2_s)
-
-    inf_change_plot_s = plot_changes_in_infected(result_s)
-    st.markdown('### Changes in infected populations over time')
-    st.plotly_chart(inf_change_plot_s)
     

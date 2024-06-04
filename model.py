@@ -165,8 +165,8 @@ def plot_changes_in_infected(result):
     normal_vaccinated = I1 + I2
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=t[:-1], y=susceptible_not_vaccinated, mode='lines', name='Susceptible not vaccinated'))
-    fig.add_trace(go.Scatter(x=t[:-1], y=susceptible_vaccinated, mode='lines', name='Susceptible vaccinated'))
+    fig.add_trace(go.Scatter(x=t[:-1], y=susceptible_not_vaccinated, mode='lines', name='More susceptible not vaccinated'))
+    fig.add_trace(go.Scatter(x=t[:-1], y=susceptible_vaccinated, mode='lines', name='More susceptible vaccinated'))
     fig.add_trace(go.Scatter(x=t[:-1], y=normal_not_vaccinated, mode='lines', name='Normal not vaccinated'))
     fig.add_trace(go.Scatter(x=t[:-1], y=normal_vaccinated, mode='lines', name='Normal vaccinated'))
     fig.update_layout(title='VAP-SIRS Model Simulation (Differences)',
@@ -177,6 +177,49 @@ def plot_changes_in_infected(result):
                       )
 
     return fig
+
+
+def plot_infected_seasons(result, beta_values):
+    days = len(result)
+    interval_length = days // len(beta_values)
+    t = np.linspace(0, days, days)
+    
+    Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2, V, Vm, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv = [result[:, i] for i in range(len(result[0]))]
+
+    Id, In, Imn, Imd, I1, I2, Im1, Im2 = [result[:, i] for i in range(10, 18)]
+    susceptible_not_vaccinated = Imn + Imd
+    susceptible_vaccinated = Im1 + Im2
+    normal_not_vaccinated = In + Id
+    normal_vaccinated = I1 + I2
+    
+    
+    palette = cycle(px.colors.qualitative.Pastel)
+    fig1 = go.Figure()
+
+    fig1.add_trace(go.Scatter(x=t, y=susceptible_not_vaccinated, mode='lines', name='More susceptible not vaccinated', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=susceptible_vaccinated, mode='lines', name='More susceptible vaccinated', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=normal_not_vaccinated, mode='lines', name='Normal not vaccinated', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=normal_vaccinated, mode='lines', name='Normal vaccinated', line_color=next(palette)))
+
+    # Kolory pór roku
+    season_colors = ['green', 'yellow', 'orange', 'blue']
+
+    # Pionowe linie i zmiana koloru tła
+    for i in range(8):
+        start = i * interval_length
+        end = start + interval_length
+        color = season_colors[i % 4]
+        fig1.add_shape(type="rect", xref="x", yref="paper", x0=start, y0=0, x1=end, y1=1, fillcolor=color, opacity=0.2, layer="below", line_width=0)
+        fig1.add_shape(type="line", xref="x", yref="paper", x0=start, y0=0, x1=start, y1=1, line=dict(color="Black", width=1))
+
+    fig1.update_layout(title='Number of infected at different seasons of the year',
+                      xaxis_title='Time (days)',
+                      yaxis_title='Total',
+                      hovermode="x",
+                      autosize=False, width=1000, height=600,)    
+
+    return fig1
+
 
 
 def plot_compartments(result):
