@@ -152,11 +152,32 @@ if st.button('Run simulation'):
     st.markdown('#### Fraction of hidden infection cases')
     st.plotly_chart(fig_hid)
 
-    st.markdown('## Real-world data simulation')
-    fig_syn0 = plot_from_file('data/synthetic_data_without_noise.tsv')
-    st.plotly_chart(fig_syn0)
+    # st.markdown('## Real-world data simulation')
+    # fig_syn0 = plot_from_file('data/synthetic_data_without_noise.tsv')
+    # st.plotly_chart(fig_syn0)
 
-    fig_syn = plot_from_file('data/synthetic_data.tsv')
-    st.plotly_chart(fig_syn)
+    result_syn = generate_synthetic_data(initial_conditions, 
+                                         params['beta_0'], 
+                                         params['beta_m0'], 
+                                         params['f'], 
+                                         params['f_v'], 
+                                         params['kappa'], 
+                                         params['upsilon'], 
+                                         params['upsilon_r'], 
+                                         params['upsilon_m'], 
+                                         params['upsilon_mr'], 
+                                         params['omega'], 
+                                         params['omega_m'], 
+                                         params['a'], 
+                                         params['a_m'], 
+                                         params['gamma'], 
+                                         params['und_inf'],
+                                         730, 
+                                         seasonal_amplitude=0.2, 
+                                         noise_std=1)
+    plot_syn = plot_compartments(result_syn)
+    st.markdown('## Real-world data simulation')
+    st.plotly_chart(plot_syn)
+    # st.plotly_chart(fig_syn)
 
     

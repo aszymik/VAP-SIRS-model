@@ -65,7 +65,7 @@ def modified_vap_sirs_model(y, _, beta_0, beta_m0, f, f_v, kappa, upsilon, upsil
 
 
 def simulate_vap_sirs_model(initial_conditions, beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf, days):
-    t = np.linspace(0, days, days)  # time points
+    t = np.linspace(0, days, days+1)  # time points
     y0 = initial_conditions
     return odeint(modified_vap_sirs_model, y0, t, args=(beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf))
 
@@ -81,3 +81,19 @@ def run_model_with_seasonal_variations(initial_conditions, beta_0, beta_m0, f, f
         results = np.concatenate((results, new_result), axis=0)  # dodajemy wynik symulacji do listy
 
     return results
+
+
+def generate_synthetic_data(initial_conditions, beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf, days, seasonal_amplitude, noise_std):
+    t = np.linspace(0, days, days+1)
+    y0 = initial_conditions
+    result = odeint(modified_vap_sirs_model, y0, t, args=(beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf))
+
+    # Fluktuacje sezonowe
+    seasonal_variation = seasonal_amplitude * np.sin(2 * np.pi * t / 365)
+    result += seasonal_variation[:, np.newaxis]
+
+    # Szum Gaussowski
+    noise = np.random.normal(scale=noise_std, size=result.shape)
+    result += noise
+
+    return result
