@@ -1,5 +1,4 @@
 from scipy.integrate import odeint
-import plotly.graph_objects as go
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
