@@ -1,5 +1,6 @@
 import streamlit as st
 from model import *
+from plots import *
 import json
 from hospital import hospital_stat
 
