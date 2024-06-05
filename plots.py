@@ -1,12 +1,13 @@
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from itertools import cycle
 
+
 def plot_absolute_values(result, N, m):
-    # Assuming 'result' is a numpy array
     days = len(result)
-    t = np.linspace(0, days, days)
+    t = np.linspace(0, days, days+1)
     
     Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2, V, Vm, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv = [result[:, i] for i in range(len(result[0]))]
 
@@ -71,7 +72,7 @@ def plot_absolute_values(result, N, m):
 
 def plot_changes_in_infected(result):
     days = len(result)
-    t = np.linspace(0, days, days)
+    t = np.linspace(0, days, days+1)
     diff_result = np.diff(result, axis=0)  # calculate the differences
 
     Id, In, Imn, Imd, I1, I2, Im1, Im2 = [diff_result[:, i] for i in range(10, 18)]
@@ -98,7 +99,7 @@ def plot_changes_in_infected(result):
 def plot_infected_seasons(result, beta_values):
     days = len(result)
     interval_length = days // len(beta_values)
-    t = np.linspace(0, days, days)
+    t = np.linspace(0, days, days+1)
     
     Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2, V, Vm, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv = [result[:, i] for i in range(len(result[0]))]
 
@@ -139,7 +140,7 @@ def plot_infected_seasons(result, beta_values):
 
 def plot_compartments(result):
     days = len(result)
-    t = np.linspace(0, days, days)
+    t = np.linspace(0, days, days+1)
     Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2, V, Vm, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv = [result[:, i] for i in range(len(result[0]))]
 
     # Summing all compartments
@@ -156,6 +157,33 @@ def plot_compartments(result):
     fig.add_trace(go.Scatter(x=t, y=V_total, mode='lines', name='V'))
 
     fig.update_layout(title='Sum of Compartments Over Time',
+                      xaxis_title='Time (days)',
+                      yaxis_title='Total',
+                      hovermode="x",
+                      autosize=False, width=1000, height=600,)
+    return fig
+
+
+def plot_from_file(filepath):
+    df = pd.read_csv(filepath, sep='\t')
+    days = len(df)
+    t = np.linspace(0, days, days+1)
+    
+    # Summing all compartments
+    S_total = df[['Sd', 'Sn', 'Smn', 'Smd', 'S1', 'S2', 'Sm1', 'Sm2']].sum(axis=1)
+    I_total = df[['Id', 'In', 'Imn', 'Imd', 'I1', 'I2', 'Im1', 'Im2']].sum(axis=1)
+    R_total = df[['Rd', 'Rn', 'Rmn', 'Rmd', 'Rv', 'Rmv']].sum(axis=1)
+    V_total = df[['V', 'Vm']].sum(axis=1)
+
+
+    # Creating the plot
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=t, y=S_total, mode='lines', name='S'))
+    fig.add_trace(go.Scatter(x=t, y=I_total, mode='lines', name='I'))
+    fig.add_trace(go.Scatter(x=t, y=R_total, mode='lines', name='R'))
+    fig.add_trace(go.Scatter(x=t, y=V_total, mode='lines', name='V'))
+
+    fig.update_layout(title='Synthetic data',
                       xaxis_title='Time (days)',
                       yaxis_title='Total',
                       hovermode="x",

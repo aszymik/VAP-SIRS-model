@@ -27,6 +27,7 @@ with st.sidebar:
         'und_inf': st.slider('% of undiagnosed infected people', min_value=0.0, max_value=1.0, value=1.0),
         'days': st.number_input('Days', min_value=1, max_value=2000, value=150, step=1)
     }
+
     d = st.slider("% of people who won't vaccinate", min_value=0.0, max_value=1.0, value=0.12)
     m = st.slider('% of more susceptible people', min_value=0.0, max_value=1.0, value=0.05)
     # Text input for filename
@@ -150,5 +151,12 @@ if st.button('Run simulation'):
     st.plotly_chart(fig_v)
     st.markdown('#### Fraction of hidden infection cases')
     st.plotly_chart(fig_hid)
+
+    st.markdown('## Real-world data simulation')
+    fig_syn0 = plot_from_file('data/synthetic_data_without_noise.tsv')
+    st.plotly_chart(fig_syn0)
+
+    fig_syn = plot_from_file('data/synthetic_data.tsv')
+    st.plotly_chart(fig_syn)
 
     
