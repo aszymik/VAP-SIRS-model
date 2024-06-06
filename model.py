@@ -74,7 +74,7 @@ def simulate_vap_sirs_model(initial_conditions, beta_0, beta_m0, f, f_v, kappa, 
 def run_model_with_seasonal_variations(initial_conditions, beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf, days, beta_values):
    
     results = np.array([initial_conditions])  # macierz do przechowywania wyników
-    interval_length = days // len(beta_values) # długość sezonu
+    interval_length = days // len(beta_values) * 2 # długość sezonu
 
     for i in range(len(beta_values)):
         new_result = simulate_vap_sirs_model(results[-1], beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf, interval_length)

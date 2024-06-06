@@ -1,8 +1,8 @@
 import streamlit as st
+import json
 from model import *
 from plots import *
-import json
-from hospital import hospital_stat
+from hospital import *
 
 from fit import *
 
@@ -26,7 +26,7 @@ with st.sidebar:
         'a': st.slider('Vaccine effectiveness for normal people', min_value=0.0, max_value=1.0, value=0.95),
         'a_m': st.slider('Vaccine effectiveness for more susceptible people', min_value=0.0, max_value=1.0, value=0.80),
         'gamma': 1/st.slider('Duration of the disease', min_value=1, max_value=21, value=7),
-        'und_inf': st.slider('% of undiagnosed infected people', min_value=0.0, max_value=1.0, value=1.0),
+        'und_inf': st.slider('% of undiagnosed infected people', min_value=0.0, max_value=1.0, value=0.55),
         'days': st.number_input('Days', min_value=1, max_value=2000, value=150, step=1)
     }
 
@@ -79,7 +79,10 @@ Rmv = 0
 
 # Paramtery do wariacji sezonowych (wiosna, lato, jesień, zima przez dwa lata)
 years = 2
-beta_values = [[0.04, 0.1], [0.4, 0.6], [0.04, 0.1], [0.02, 0.09]] * years
+beta_values = [[0.02, 0.06], [0.02, 0.06],
+               [0.01, 0.05], [0.02, 0.06], 
+               [0.04, 0.2], [0.04, 0.2],
+               [0.4, 0.6], [0.4, 0.6]] * years
 
 
 # Przycisk do uruchomienia symulacji
@@ -154,11 +157,20 @@ if st.button('Run simulation'):
     st.markdown('#### Fraction of hidden infection cases')
     st.plotly_chart(fig_hid)
 
-    st.markdown('## Real-world data simulation')
+    st.markdown('## Transmition rate for More Susceptible')
+    st.markdown('### Influence on Infected number')
+    fig_beta_m = beta_m_stat()
+    st.plotly_chart(fig_beta_m)
 
+    st.markdown('## Real-world data simulation')
     st.markdown('### Data based on Hospital scenario')
     plot_syn, plot_fit, params_plot = fitted_scenario('data/params_s1.json', initial_conditions)
     st.plotly_chart(plot_syn)
     st.plotly_chart(plot_fit)
     st.plotly_chart(params_plot)
+
+
+
+
+
     

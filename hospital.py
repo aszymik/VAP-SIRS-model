@@ -1,5 +1,4 @@
 from model import *
-import plotly.express as px
 import plotly.graph_objects as go
 from json import load
 import numpy as np
@@ -74,6 +73,27 @@ def hospital_stat():
                         hovermode="x",
                         autosize=False, width=1000, height=600,)
     return fig_beta, fig_f, fig_fv, fig_v, fig_hid
+
+
+def beta_m_stat():
+    t = np.linspace(0, 150, 150)
+
+    # b=? bm=0.2, f=0.95, fv=0.8, v=vr=0.1, vm=vmr=0.2, hid_case=0.55
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=t, y=run_from_file('data/params_s12.json'), mode='lines', name='0.2'))
+    fig.add_trace(go.Scatter(x=t, y=run_from_file('data/params_s13.json'), mode='lines', name='0.4'))
+    fig.add_trace(go.Scatter(x=t, y=run_from_file('data/params_s14.json'), mode='lines', name='0.6'))
+    fig.add_trace(go.Scatter(x=t, y=run_from_file('data/params_s15.json'), mode='lines', name='0.8'))
+    fig.add_trace(go.Scatter(x=t, y=run_from_file('data/params_s16.json'), mode='lines', name='1.0'))
+
+    fig.update_layout(title='Impact of the Beta Coefficient for More Susceptible on the Total Case Count',
+                        xaxis_title='Time (days)',
+                        yaxis_title='% of population',
+                        legend_title_text='Beta',
+                        hovermode="x",
+                        autosize=False, width=1000, height=600,)
+
+    return fig
 
 N = 100
 V, Vm = 0, 0

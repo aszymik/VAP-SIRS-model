@@ -86,8 +86,8 @@ def plot_changes_in_infected(result):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=t[:-1], y=susceptible_not_vaccinated, mode='lines', name='More susceptible not vaccinated'))
     fig.add_trace(go.Scatter(x=t[:-1], y=susceptible_vaccinated, mode='lines', name='More susceptible vaccinated'))
-    fig.add_trace(go.Scatter(x=t[:-1], y=normal_not_vaccinated, mode='lines', name='Normal not vaccinated'))
-    fig.add_trace(go.Scatter(x=t[:-1], y=normal_vaccinated, mode='lines', name='Normal vaccinated'))
+    fig.add_trace(go.Scatter(x=t[:-1], y=normal_not_vaccinated, mode='lines', name='Standard not vaccinated'))
+    fig.add_trace(go.Scatter(x=t[:-1], y=normal_vaccinated, mode='lines', name='Standard vaccinated'))
     fig.update_layout(title='VAP-SIRS Model Simulation (Differences)',
                       xaxis_title='Time (days)',
                       yaxis_title='Change in infected population',
@@ -100,7 +100,7 @@ def plot_changes_in_infected(result):
 
 def plot_infected_seasons(result, beta_values):
     days = len(result)
-    interval_length = days // len(beta_values)
+    interval_length = days // len(beta_values) * 2
     t = np.linspace(0, days, days+1)
     
     Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2, V, Vm, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv = [result[:, i] for i in range(len(result[0]))]
@@ -117,8 +117,8 @@ def plot_infected_seasons(result, beta_values):
 
     fig1.add_trace(go.Scatter(x=t, y=susceptible_not_vaccinated, mode='lines', name='More susceptible not vaccinated', line_color=next(palette)))
     fig1.add_trace(go.Scatter(x=t, y=susceptible_vaccinated, mode='lines', name='More susceptible vaccinated', line_color=next(palette)))
-    fig1.add_trace(go.Scatter(x=t, y=normal_not_vaccinated, mode='lines', name='Normal not vaccinated', line_color=next(palette)))
-    fig1.add_trace(go.Scatter(x=t, y=normal_vaccinated, mode='lines', name='Normal vaccinated', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=normal_not_vaccinated, mode='lines', name='Standard not vaccinated', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=normal_vaccinated, mode='lines', name='Standard vaccinated', line_color=next(palette)))
 
     # Kolory pór roku
     season_colors = ['green', 'yellow', 'orange', 'blue']
