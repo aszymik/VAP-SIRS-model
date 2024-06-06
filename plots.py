@@ -195,8 +195,8 @@ def plot_from_file(filepath):
 
 def plot_all(result, label):
 
-    days = 730
-    t = np.linspace(0, days, days+1) 
+    days = len(result)
+    t = np.linspace(0, days, days) 
 
     palette = cycle(px.colors.qualitative.Pastel)
     fig = go.Figure()

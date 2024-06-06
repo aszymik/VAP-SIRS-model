@@ -101,7 +101,7 @@ def generate_synthetic_data(initial_conditions, beta_0, beta_m0, f, f_v, kappa, 
 
 def fit_to_real_data(initial_condition, noised_data, init_params):
 
-    days = 730
+    days = len(noised_data)
     t = np.linspace(0, days, days) 
     bounds = [(0,1),(0,1),(0,1),(0,1), (1/700, 1/30), (0,1),(0,1),(0,1),(0,1), (1/700, 1/30), (1/700, 1/30),(0,1),(0,1), (1/21, 1), (0,1)]
     def mse(params):
@@ -116,3 +116,17 @@ def fit_to_real_data(initial_condition, noised_data, init_params):
     pred_opt = odeint(modified_vap_sirs_model, initial_condition, t, args=optimal_params)
 
     return pred_opt, optimal_params
+
+
+def add_noise(data, seasonal_amplitude, noise_std):
+    days = len(data)
+    t = np.linspace(0, days, days)
+     # Fluktuacje sezonowe
+    seasonal_variation = seasonal_amplitude * np.sin(2 * np.pi * t / 365)
+    data += seasonal_variation[:, np.newaxis]
+
+    # Szum Gaussowski
+    noise = np.random.normal(scale=noise_std, size=data.shape)
+    data += noise
+
+    return data

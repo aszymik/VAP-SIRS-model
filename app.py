@@ -140,6 +140,7 @@ if st.button('Run simulation'):
                                                    730,
                                                    beta_values
                                                    )
+    print(result_s.shape)
     
     inf_seasons_plot = plot_infected_seasons(result_s, beta_values)
     st.markdown('## Seasonal variation')
@@ -169,6 +170,13 @@ if st.button('Run simulation'):
     st.plotly_chart(plot_fit)
     st.plotly_chart(params_plot)
 
+    print(f'{result_s.shape=}')
+    st.markdown('### Data based on seasonalvariations scenario')
+    seasonal_noise = add_noise(result_s, seasonal_amplitude=0.2, noise_std=1)
+    plot_syn, plot_fit, params_plot = fit_seasonal(seasonal_noise, params, initial_conditions)
+    st.plotly_chart(plot_syn)
+    st.plotly_chart(plot_fit)
+    st.plotly_chart(params_plot)
 
 
 
