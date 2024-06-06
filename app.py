@@ -1,8 +1,8 @@
 import streamlit as st
+import json
 from model import *
 from plots import *
-import json
-from hospital import hospital_stat
+from hospital import *
 
 
 st.title('VAP-SIRS Model Simulation')
@@ -152,9 +152,10 @@ if st.button('Run simulation'):
     st.markdown('#### Fraction of hidden infection cases')
     st.plotly_chart(fig_hid)
 
-    # st.markdown('## Real-world data simulation')
-    # fig_syn0 = plot_from_file('data/synthetic_data_without_noise.tsv')
-    # st.plotly_chart(fig_syn0)
+    st.markdown('## Transmition rate for More Susceptible')
+    st.markdown('### Influence on Infected number')
+    fig_beta_m = beta_m_stat()
+    st.plotly_chart(fig_beta_m)
 
     result_syn = generate_synthetic_data(initial_conditions, 
                                          params['beta_0'], 
@@ -178,6 +179,4 @@ if st.button('Run simulation'):
     plot_syn = plot_compartments(result_syn)
     st.markdown('## Real-world data simulation')
     st.plotly_chart(plot_syn)
-    # st.plotly_chart(fig_syn)
-
     
