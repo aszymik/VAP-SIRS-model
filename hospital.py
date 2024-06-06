@@ -86,7 +86,7 @@ def beta_m_stat():
     fig.add_trace(go.Scatter(x=t, y=run_from_file('data/params_s15.json'), mode='lines', name='0.8'))
     fig.add_trace(go.Scatter(x=t, y=run_from_file('data/params_s16.json'), mode='lines', name='1.0'))
 
-    fig.update_layout(title='Impact of the Beta Coefficient for More Susceptible on the Total Case Count',
+    fig.update_layout(title='Impact of the Beta Coefficient for More Susceptible on the More Susceptible Case Count',
                         xaxis_title='Time (days)',
                         yaxis_title='% of population',
                         legend_title_text='Beta',
@@ -121,4 +121,6 @@ def run_from_file(filename):
         data = load(file)
     result = simulate_vap_sirs_model(initial_conditions, **data)
     I_total = np.sum([result[:, i] for i in range(10, 18)], axis=0)
+    # I_normal = np.sum([result[:, i] for i in [10, 11, 14, 15]], axis=0)
+    # I_m = np.sum([result[:, i] for i in [12, 13, 16, 17]], axis=0)
     return I_total
