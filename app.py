@@ -24,7 +24,7 @@ with st.sidebar:
         'a': st.slider('Vaccine effectiveness for normal people', min_value=0.0, max_value=1.0, value=0.95),
         'a_m': st.slider('Vaccine effectiveness for more susceptible people', min_value=0.0, max_value=1.0, value=0.80),
         'gamma': 1/st.slider('Duration of the disease', min_value=1, max_value=21, value=7),
-        'und_inf': st.slider('% of undiagnosed infected people', min_value=0.0, max_value=1.0, value=1.0),
+        'und_inf': st.slider('% of undiagnosed infected people', min_value=0.0, max_value=1.0, value=0.55),
         'days': st.number_input('Days', min_value=1, max_value=2000, value=150, step=1)
     }
 
@@ -77,7 +77,10 @@ Rmv = 0
 
 # Paramtery do wariacji sezonowych (wiosna, lato, jesień, zima przez dwa lata)
 years = 2
-beta_values = [[0.04, 0.1], [0.4, 0.6], [0.04, 0.1], [0.02, 0.09]] * years
+beta_values = [[0.02, 0.06], [0.02, 0.06],
+               [0.01, 0.05], [0.02, 0.06], 
+               [0.04, 0.2], [0.04, 0.2],
+               [0.4, 0.6], [0.4, 0.6]] * years
 
 
 # Przycisk do uruchomienia symulacji
