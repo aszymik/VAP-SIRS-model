@@ -4,6 +4,8 @@ from plots import *
 import json
 from hospital import hospital_stat
 
+from fit import *
+
 
 st.title('VAP-SIRS Model Simulation')
 
@@ -14,13 +16,13 @@ with st.sidebar:
         'beta_m0': st.slider('Beta m', min_value=0.0, max_value=1.0, value=0.2),
         'f': st.slider('f', min_value=0.0, max_value=1.0, value=0.77),
         'f_v': st.slider('fv', min_value=0.0, max_value=1.0, value=0.55),
+        'kappa': 1/st.slider('Number of days after which recovered people lose their immunity', min_value=30, max_value=700, value=400),
         'upsilon': st.slider('Upsilon', min_value=0.0, max_value=1.0, value=0.005),
         'upsilon_r': st.slider('Upsilon R', min_value=0.0, max_value=1.0, value=0.005),
         'upsilon_m': st.slider('Upsilon m', min_value=0.0, max_value=1.0, value=0.01),
         'upsilon_mr': st.slider('Upsilon m R', min_value=0.0, max_value=1.0, value=0.01),
         'omega': 1/st.slider('Number of days after which vaccinated normal people lose their immunity', min_value=30, max_value=700, value=365),
         'omega_m': 1/st.slider('Number of days after which vaccinated more susceptible people lose their immunity', min_value=30, max_value=700, value=365),
-        'kappa': 1/st.slider('Number of days after which recovered people lose their immunity', min_value=30, max_value=700, value=400),
         'a': st.slider('Vaccine effectiveness for normal people', min_value=0.0, max_value=1.0, value=0.95),
         'a_m': st.slider('Vaccine effectiveness for more susceptible people', min_value=0.0, max_value=1.0, value=0.80),
         'gamma': 1/st.slider('Duration of the disease', min_value=1, max_value=21, value=7),
@@ -152,32 +154,11 @@ if st.button('Run simulation'):
     st.markdown('#### Fraction of hidden infection cases')
     st.plotly_chart(fig_hid)
 
-    # st.markdown('## Real-world data simulation')
-    # fig_syn0 = plot_from_file('data/synthetic_data_without_noise.tsv')
-    # st.plotly_chart(fig_syn0)
-
-    result_syn = generate_synthetic_data(initial_conditions, 
-                                         params['beta_0'], 
-                                         params['beta_m0'], 
-                                         params['f'], 
-                                         params['f_v'], 
-                                         params['kappa'], 
-                                         params['upsilon'], 
-                                         params['upsilon_r'], 
-                                         params['upsilon_m'], 
-                                         params['upsilon_mr'], 
-                                         params['omega'], 
-                                         params['omega_m'], 
-                                         params['a'], 
-                                         params['a_m'], 
-                                         params['gamma'], 
-                                         params['und_inf'],
-                                         730, 
-                                         seasonal_amplitude=0.2, 
-                                         noise_std=1)
-    plot_syn = plot_compartments(result_syn)
     st.markdown('## Real-world data simulation')
-    st.plotly_chart(plot_syn)
-    # st.plotly_chart(fig_syn)
 
+    st.markdown('### Data based on Hospital scenario')
+    plot_syn, plot_fit, params_plot = fitted_scenario('data/params_s1.json', initial_conditions)
+    st.plotly_chart(plot_syn)
+    st.plotly_chart(plot_fit)
+    st.plotly_chart(params_plot)
     

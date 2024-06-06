@@ -29,6 +29,7 @@ def plot_absolute_values(result, N, m):
     fig1.add_trace(go.Scatter(x=t, y=I2*n_scale, mode='lines', name='I2', line_color=next(palette)))
     fig1.add_trace(go.Scatter(x=t, y=Rd*n_scale, mode='lines', name='Rd', line_color=next(palette)))
     fig1.add_trace(go.Scatter(x=t, y=Rn*n_scale, mode='lines', name='Rn', line_color=next(palette)))
+    fig1.add_trace(go.Scatter(x=t, y=Rv*n_scale, mode='lines', name='Rn', line_color=next(palette)))
 
     # Set layout properties
     fig1.update_layout(
@@ -57,6 +58,7 @@ def plot_absolute_values(result, N, m):
     fig2.add_trace(go.Scatter(x=t, y=Im2*m_scale, mode='lines', name='Im2', line_color=next(palette)))
     fig2.add_trace(go.Scatter(x=t, y=Rmn*m_scale, mode='lines', name='Rmn', line_color=next(palette)))
     fig2.add_trace(go.Scatter(x=t, y=Rmd*m_scale, mode='lines', name='Rmd', line_color=next(palette)))
+    fig2.add_trace(go.Scatter(x=t, y=Rmv*m_scale, mode='lines', name='Rmd', line_color=next(palette)))
 
     # Set layout properties
     fig2.update_layout(
@@ -188,4 +190,52 @@ def plot_from_file(filepath):
                       yaxis_title='Total',
                       hovermode="x",
                       autosize=False, width=1000, height=600,)
+    return fig
+
+
+def plot_all(result, label):
+
+    days = 730
+    t = np.linspace(0, days, days+1) 
+
+    palette = cycle(px.colors.qualitative.Pastel)
+    fig = go.Figure()
+
+    Sd, Sn, Smn, Smd, S1, S2, Sm1, Sm2, V, Vm, Id, In, Imn, Imd, I1, I2, Im1, Im2, Rd, Rn, Rmn, Rmd, Rv, Rmv = [result[:, i] for i in range(len(result[0]))]
+
+    # Add traces
+    fig.add_trace(go.Scatter(x=t, y=Sd, mode='lines', name='Sd', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Sn, mode='lines', name='Sn', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=S1, mode='lines', name='S1', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=S2, mode='lines', name='S2', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=V, mode='lines', name='V', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Id, mode='lines', name='Id', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=In, mode='lines', name='In', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=I1, mode='lines', name='I1', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=I2, mode='lines', name='I2', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Rd, mode='lines', name='Rd', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Rn, mode='lines', name='Rn', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Rv, mode='lines', name='Rn', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Smn, mode='lines', name='Smn', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Smd, mode='lines', name='Smd', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Sm1, mode='lines', name='Sm1', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Sm2, mode='lines', name='Sm2', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Vm, mode='lines', name='Vm', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Imn, mode='lines', name='Imn', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Imd, mode='lines', name='Imd', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Im1, mode='lines', name='Im1', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Im2, mode='lines', name='Im2', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Rmn, mode='lines', name='Rmn', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Rmd, mode='lines', name='Rmd', line_color=next(palette)))
+    fig.add_trace(go.Scatter(x=t, y=Rmv, mode='lines', name='Rn', line_color=next(palette)))
+
+    # Set layout properties
+    fig.update_layout(
+        title=label,
+        xaxis_title='Time (days)',
+        yaxis_title='Population',
+        legend_title='Variables',
+        hovermode="x",
+        autosize=False, width=1000, height=600,
+    )
     return fig

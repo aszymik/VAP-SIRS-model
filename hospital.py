@@ -3,6 +3,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from json import load
 import numpy as np
+from model import *
 
 def hospital_stat():
     t = np.linspace(0, 150, 150)

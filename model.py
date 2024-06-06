@@ -1,5 +1,6 @@
 from scipy.integrate import odeint
 import numpy as np
+from scipy.optimize import minimize
 
 
 def modified_vap_sirs_model(y, _, beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf):
@@ -65,7 +66,7 @@ def modified_vap_sirs_model(y, _, beta_0, beta_m0, f, f_v, kappa, upsilon, upsil
 
 
 def simulate_vap_sirs_model(initial_conditions, beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf, days):
-    t = np.linspace(0, days, days+1)  # time points
+    t = np.linspace(0, days, days)  # time points
     y0 = initial_conditions
     return odeint(modified_vap_sirs_model, y0, t, args=(beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf))
 
@@ -84,7 +85,7 @@ def run_model_with_seasonal_variations(initial_conditions, beta_0, beta_m0, f, f
 
 
 def generate_synthetic_data(initial_conditions, beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf, days, seasonal_amplitude, noise_std):
-    t = np.linspace(0, days, days+1)
+    t = np.linspace(0, days, days)
     y0 = initial_conditions
     result = odeint(modified_vap_sirs_model, y0, t, args=(beta_0, beta_m0, f, f_v, kappa, upsilon, upsilon_r, upsilon_m, upsilon_mr, omega, omega_m, a, a_m, gamma, und_inf))
 
@@ -97,3 +98,21 @@ def generate_synthetic_data(initial_conditions, beta_0, beta_m0, f, f_v, kappa, 
     result += noise
 
     return result
+
+def fit_to_real_data(initial_condition, noised_data, init_params):
+
+    days = 730
+    t = np.linspace(0, days, days) 
+    bounds = [(0,1),(0,1),(0,1),(0,1), (1/700, 1/30), (0,1),(0,1),(0,1),(0,1), (1/700, 1/30), (1/700, 1/30),(0,1),(0,1), (1/21, 1), (0,1)]
+    def mse(params):
+        pred = odeint(modified_vap_sirs_model, initial_condition, t, args=tuple(params))
+        return np.sum(np.square(np.subtract(noised_data, pred)), axis=1).mean()
+    
+    # Minimalizacja funkcji straty
+    fitted = minimize(mse, init_params, bounds=bounds)
+    # Wyniki
+    optimal_params = tuple(fitted.x)
+
+    pred_opt = odeint(modified_vap_sirs_model, initial_condition, t, args=optimal_params)
+
+    return pred_opt, optimal_params
