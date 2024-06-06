@@ -95,15 +95,77 @@ def beta_m_stat():
 
     return fig
 
+
+def v_m_stat():
+
+    params={'beta_0': 0.1, 'beta_m0':0.2,
+             'f': 0.77,
+             'f_v': 0.55,
+             'kappa': 0.0025,
+             'upsilon': 0.005,'upsilon_r': 0.005,
+             'omega': 0.0027397260273972603, 'omega_m': 0.0027397260273972603,
+             'a': 0.95, 'a_m': 0.8,
+             'gamma': 0.14285714285714285,
+             'und_inf': 0.55,
+             'days': 150}
+    t = np.linspace(0, 150, 150)
+    m_scale = 100 / (N * 0.05)
+    n_scale = 100 / (N * 0.95)
+
+    vs = [(0.008, 0.008), (0.016,0.016), (0.032, 0.032), (0.064, 0.064), (0.128, 0.0128)]
+    
+    fig_ims, fig_im, fig_i = go.Figure(), go.Figure(),  go.Figure()
+    for (vm, vmr) in vs:
+        params['upsilon_m'] = vm
+        params['upsilon_mr'] = vmr
+
+        data = simulate_vap_sirs_model(initial_conditions, **params)
+        Id, In, Imn, Imd, I1, I2, Im1, Im2 = [data[:, i] for i in range(10, 18)]
+        Im = np.sum([Imn, Imd, Im1, Im2], axis=0)
+        I = np.sum([Imn, Imd, Im1, Im2, Id, In, I1, I2], axis=0)
+        
+        fig_ims.add_trace(go.Scatter(x=t, y=Imn*m_scale, mode='lines', name=f'Imn {(vm, vmr)}'))
+        fig_ims.add_trace(go.Scatter(x=t, y=Imd*m_scale, mode='lines', name=f'Imd {(vm, vmr)}'))
+        fig_ims.add_trace(go.Scatter(x=t, y=Im1*m_scale, mode='lines', name=f'Im1 {(vm, vmr)}'))
+        fig_ims.add_trace(go.Scatter(x=t, y=Im2*m_scale, mode='lines', name=f'Im2 {(vm, vmr)}'))
+
+        fig_im.add_trace(go.Scatter(x=t, y=Im*m_scale, mode='lines', name=f'Im {(vm, vmr)}'))
+        fig_i.add_trace(go.Scatter(x=t, y=I*n_scale, mode='lines', name=f'I {(vm, vmr)}'))
+
+        fig_ims.update_layout(title=f'Impact of vacination rate on infected (that were more susceptible) from specific compartments',
+                    xaxis_title='Time (days)',
+                    yaxis_title='% of population',
+                    legend_title_text='Vm, Vmr',
+                    hovermode="x",
+                    autosize=False, width=1000, height=600,)
+
+        fig_im.update_layout(title=f'Impact of vacination rate on total number of infection of more susceptible people',
+                    xaxis_title='Time (days)',
+                    yaxis_title='% of population',
+                    legend_title_text='Vm, Vmr',
+                    hovermode="x",
+                    autosize=False, width=1000, height=600,)
+        fig_i.update_layout(title=f'Impact of vacination rate on total number cases of infection',
+                    xaxis_title='Time (days)',
+                    yaxis_title='% of population',
+                    legend_title_text='Vm, Vmr',
+                    hovermode="x",
+                    autosize=False, width=1000, height=600,)
+
+    return fig_ims, fig_im, fig_i
+
+
+
+
 N = 100
 V, Vm = 0, 0
 
 I_percn = 0.01
 
-Sd = 0.12 * (1-0.1) * N
-Sn = (1-0.12)* (1-0.1) * N
-Smn = (1-0.12) * 0.1 * N
-Smd = 0.12 * 0.1 * N
+Sd = 0.12 * (1-0.05) * N
+Sn = (1-0.12)* (1-0.05) * N
+Smn = (1-0.12) * 0.05 * N
+Smd = 0.12 * 0.05 * N
 S1, S2, Sm1, Sm2 = 0, 0, 0, 0
 
 Id = I_percn * Sd

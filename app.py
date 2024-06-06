@@ -159,7 +159,10 @@ if st.button('Run simulation'):
 
     st.markdown('## Transmition rate for More Susceptible')
 
-    # plot_equal = plot vm (params, initial_conditions)
+    plot_ims, plot_im, plot_i = v_m_stat()
+    st.plotly_chart(plot_im)
+    st.plotly_chart(plot_ims)
+    st.plotly_chart(plot_i)
 
     st.markdown('### Influence on Infected number')
     fig_beta_m = beta_m_stat()
