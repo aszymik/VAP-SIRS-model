@@ -1,6 +1,6 @@
 # Epidemic modelling using extended VAP-SIRS model
 
-The project is a streamlit application that allows modeling of epidemics taking into account vaccinated and more susceptible people, with different parameter values.
+The project is a streamlit application that allows modeling of epidemics taking into account vaccinated and more susceptible people, using different parameter values.
 
 ![App interface](images/app_screen.png)
 
